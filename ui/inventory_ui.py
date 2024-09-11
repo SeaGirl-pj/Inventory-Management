@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver
+from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -630,8 +630,8 @@ def enter_form():
 
                 code = item[0] 
                 kala = item[1]
-                number = item[3]
-                unit = item[4]
+                number = item[2]
+                unit = item[3]
 
                 tree.insert('', 'end', values=(unit ,number , kala ,code)) 
             
@@ -647,11 +647,12 @@ def enter_form():
             if selected_item:  
                 for item in selected_item:
                     values = tree.item(item, 'values')
-                    name = values[0]
-                    code= values[1]
-                    number = values[2]
+                    code = values[3] 
+                    kala = values[2]
+                    number = values[1]
+                    unit = values[0]
 
-                CheckDeleteReveiver(number= number, code= code, title= name)   
+                CheckDeleteStock(code = code , kala_name = kala , number= number ,  unit = unit)   
                 show_table()    
                     
             else:
@@ -669,6 +670,8 @@ def enter_form():
             kala_name_var.set('')
             number_var.set('')
             unit_var.set('')
+
+            show_table()
 
         for widgets in btn_frame.winfo_children():
              widgets.destroy()
@@ -693,14 +696,6 @@ def enter_form():
         tree.heading('2', text='نام کالا', anchor='center')
         tree.heading('1', text='کد', anchor='center')
 
-        data = [
-            ("مقدار 1-1", "مقدار 1-2", "مقدار 1-3", "مقدار 1-3"),
-            ("مقدار 2-1", "مقدار 2-2", "مقدار 2-3", "مقدار 1-3"),
-            ("مقدار 3-1", "مقدار 3-2", "مقدار 3-3", "مقدار 1-3"),
-        ]
-
-        for item in data:
-            tree.insert('', 'end', values=item)
         
         tree.pack(padx=(20,0), pady=(20,0), fill=X)
 
@@ -730,7 +725,7 @@ def enter_form():
             master=btn_frame,
             text='حذف',
             compound=LEFT,
-            command=select_add_button
+            command=remove_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)    
 
 
@@ -826,6 +821,8 @@ def enter_form():
             width=31,
             textvariable=unit_var
         ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        show_table()
 
 
         #endregion

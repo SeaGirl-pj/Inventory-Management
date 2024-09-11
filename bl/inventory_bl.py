@@ -124,3 +124,30 @@ class AddStock:
         messagebox.showinfo("Success", "Data saved successfully!")
 
 
+class DeleteStock:
+    def __init__ (self, code, kala_name, number, unit):
+        self.code = code
+        self.kala_name = kala_name
+        self.number = number
+        self.unit = unit
+        
+        self.delete_row_database()
+
+
+    def delete_row_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'stock.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        DELETE FROM stock WHERE code = ? AND kala = ? AND number = ? AND unit = ?
+        ''', (self.code, self.kala_name, self.number, self.unit))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data deleted successfully!")
+
+

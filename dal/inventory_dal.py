@@ -1,6 +1,6 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver
+from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 
@@ -86,4 +86,21 @@ class CheckStock:
         
         if not error:
             AddStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
+
+
+class CheckDeleteStock:
+    def __init__(self, code, kala_name, number, unit):
+        self.code = code
+        self.kala_name = kala_name
+        self.number = number
+        self.unit = unit
+
+        self.check()
+
+    def check(self):
+
+        message = (f'code: {self.code} \nkala: {self.kala_name} \nnumber: {self.number}\nunit: {self.unit}\nAre you sure you want to delete this row?')
+        confirm = msg.askyesno(title='Confirmation', message=message)
+        if confirm:
+            DeleteStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
 
