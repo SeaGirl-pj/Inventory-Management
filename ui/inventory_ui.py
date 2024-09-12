@@ -481,18 +481,22 @@ def enter_form():
                 tree.insert('', 'end', values=(title, code, number)) 
             
             num = get_number()
-            number_var.set(num) 
             current_date = jdatetime.datetime.now()
-            day_var.set(current_date.strftime('%d')) 
-            month_var.set(current_date.strftime('%m')) 
-            year_var.set(current_date.strftime('%Y')) 
+
+            number_entry.insert(0, num)
+            day_entry.insert(0, current_date.strftime('%d'))
+            month_entry.insert(0, current_date.strftime('%m'))
+            year_entry.insert(0, current_date.strftime('%Y'))
+            
+
+
+
 
 
             connection.close()
 
         for widgets in btn_frame.winfo_children():
             widgets.destroy()
-
 
         for widgets in add_frame.winfo_children():
             widgets.destroy()
@@ -611,17 +615,7 @@ def enter_form():
 
     
         #endregion
-
-        number_var = StringVar()
-        day_var = StringVar()
-        month_var = StringVar()
-        year_var = StringVar()
-        reciev_code_var = StringVar()
-        reciev_name_var = StringVar()
-        desc_var = StringVar()
-
-
-
+        
 
         #region Entry
 
@@ -629,52 +623,62 @@ def enter_form():
         number_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable=number_var,
-            width=25
-            
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+            width=25,
+            # textvariable=number_var
+        )
+        number_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
         day_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= day_var,
+            #textvariable= day_var,
             width=6
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+        )
+        day_entry.pack(fill=BOTH, expand=False, side=RIGHT)
         month_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= month_var,
+            #textvariable= month_var,
             width=6
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+        )
+        month_entry.pack(fill=BOTH, expand=False, side=RIGHT)
         year_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= year_var, 
-            width=6
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+            #textvariable= year_var, 
+            width=7
+        )
+        year_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
         reciev_code_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= reciev_code_var, 
+            #textvariable= reciev_code_var, 
             width=27
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+        )
+        reciev_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
         reciev_name_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= reciev_name_var , 
+            #textvariable= reciev_name_var , 
             width=27
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+        )
+        reciev_name_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
         desc_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= desc_var ,
+            #textvariable= desc_var ,
             width=28
-        ).pack(fill=BOTH, expand=False, side=RIGHT)
+        )
+        desc_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        number_entry.update_idletasks()
 
         show_table()
+
+        
 
 
 
