@@ -19,7 +19,7 @@ class AddReceiver:
     def setup_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
         connection = sqlite3.connect(DATABASE_PATH)
 
         cursor = connection.cursor()
@@ -37,7 +37,7 @@ class AddReceiver:
     def save_to_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
 
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
@@ -62,7 +62,7 @@ class DeleteReceiver:
     def delete_row_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
 
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
@@ -91,7 +91,7 @@ class AddStock:
     def setup_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'stock.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
         connection = sqlite3.connect(DATABASE_PATH)
 
         cursor = connection.cursor()
@@ -110,7 +110,7 @@ class AddStock:
     def save_to_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'stock.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
 
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
@@ -137,7 +137,7 @@ class DeleteStock:
     def delete_row_database(self):
 
         DATABASE_DIR = 'database'
-        DATABASE_PATH = os.path.join(DATABASE_DIR, 'stock.db')
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
 
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()

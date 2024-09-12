@@ -181,7 +181,7 @@ def enter_form():
         def get_number():
 
             DATABASE_DIR = 'database'
-            DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
             connection = sqlite3.connect(DATABASE_PATH)
             cursor = connection.cursor()
             cursor.execute('SELECT number FROM receiver')
@@ -202,7 +202,7 @@ def enter_form():
                 tree.delete(item)
 
             DATABASE_DIR = 'database'
-            DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
             connection = sqlite3.connect(DATABASE_PATH)
             cursor = connection.cursor()
             cursor.execute('''
@@ -605,7 +605,7 @@ def enter_form():
                 tree.delete(item)
 
             DATABASE_DIR = 'database'
-            DATABASE_PATH = os.path.join(DATABASE_DIR, 'stock.db')
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
             connection = sqlite3.connect(DATABASE_PATH)
             cursor = connection.cursor()
             cursor.execute('''
