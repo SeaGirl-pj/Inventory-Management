@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock
+from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -458,8 +458,10 @@ def enter_form():
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS depository (
                 number INTEGER ,
-                code INTEGER,
-                title TEXT NOT NULL
+                date text,
+                recievercode TEXT NOT NULL,
+                recievername TEXT NOT NULL,
+                desc TEXT NOT NULL
             )
             ''')
             cursor.execute(f'SELECT * FROM depository')
@@ -475,10 +477,12 @@ def enter_form():
             for item in data:  
 
                 number = item[0] 
-                code = item[1]
-                title = item[2]
+                date = item[1]
+                receiv_code = item[2]
+                receiv_name = item[3]
+                desc = item[4]
 
-                tree.insert('', 'end', values=(title, code, number)) 
+                tree.insert('', 'end', values=(desc, receiv_name, receiv_code, date, number)) 
             
             num = get_number()
             current_date = jdatetime.datetime.now()
@@ -494,6 +498,44 @@ def enter_form():
 
 
             connection.close()
+
+        def remove_btn():
+
+            selected_item = tree.selection()
+
+            # if selected_item:  
+            #     for item in selected_item:
+            #         values = tree.item(item, 'values')
+                    
+            #         number = values[0]
+            #         date = values[1]
+            #         reciev_code = values[2]
+            #         reciev_name = values[3]
+            #         desc = values[4]
+
+            #     CheckDeleteDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)   
+            #     show_table()    
+                    
+            # else:
+            #     msg.showerror("Error", "Please select a user to delete.")
+
+
+        def add_btn():
+
+            number = number_entry.get()
+            date = (f'{year_entry.get()}-{month_entry.get()}-{day_entry.get()}')
+            reciev_code = reciev_code_entry.get()
+            reciev_name = reciev_name_entry.get()
+            desc = desc_entry.get()
+            
+            CheckAddDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)
+
+            
+            receiv_code_var.set('')
+            receiv_name_var.set('')
+            desc_var.set('')
+            show_table()
+            
 
         for widgets in btn_frame.winfo_children():
             widgets.destroy()
@@ -542,7 +584,7 @@ def enter_form():
             master=btn_frame,
             text='اضافه',
             compound=LEFT,
-            command=select_add_button
+            command=add_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)  
         
         delete = ttk.Button(
@@ -563,7 +605,7 @@ def enter_form():
 
         #region add Label
             
-        num= ttk.Label(
+        number_label= ttk.Label(
             master=heading_in_add_frame,
             text='شماره',
             font=("Dubai", 10),
@@ -571,9 +613,9 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        num.pack(side=RIGHT, padx=(0,60), fill=Y)
+        number_label.pack(side=RIGHT, padx=(0,60), fill=Y)
 
-        date= ttk.Label(
+        date_label= ttk.Label(
             master=heading_in_add_frame,
             text='تاریخ',
             font=("Dubai", 10),
@@ -581,9 +623,9 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        date.pack(side=RIGHT, padx=(0,120), fill=Y)
+        date_label.pack(side=RIGHT, padx=(0,120), fill=Y)
 
-        reciev_code= ttk.Label(
+        reciev_code_label= ttk.Label(
             master=heading_in_add_frame,
             text='کد تحویل گیرنده',
             font=("Dubai", 10),
@@ -591,9 +633,9 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        reciev_code.pack(side=RIGHT, padx=(0,80), fill=Y)
+        reciev_code_label.pack(side=RIGHT, padx=(0,80), fill=Y)
 
-        reciev_name= ttk.Label(
+        reciev_name_label= ttk.Label(
             master=heading_in_add_frame,
             text='عنوان تحویل گیرنده',
             font=("Dubai", 10),
@@ -601,9 +643,9 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        reciev_name.pack(side=RIGHT, padx=(0,80), fill=Y)
+        reciev_name_label.pack(side=RIGHT, padx=(0,80), fill=Y)
 
-        desc= ttk.Label(
+        desc_label= ttk.Label(
             master=heading_in_add_frame,
             text='توضیحات',
             font=("Dubai", 10),
@@ -611,11 +653,14 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        desc.pack(side=RIGHT, padx=(0,90), fill=Y)
+        desc_label.pack(side=RIGHT, padx=(0,90), fill=Y)
 
     
         #endregion
         
+        receiv_code_var = StringVar()
+        receiv_name_var = StringVar()
+        desc_var = StringVar()
 
         #region Entry
 
@@ -623,29 +668,25 @@ def enter_form():
         number_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=25,
-            # textvariable=number_var
+            width=25
         )
         number_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
         day_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= day_var,
             width=6
         )
         day_entry.pack(fill=BOTH, expand=False, side=RIGHT)
         month_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= month_var,
             width=6
         )
         month_entry.pack(fill=BOTH, expand=False, side=RIGHT)
         year_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= year_var, 
             width=7
         )
         year_entry.pack(fill=BOTH, expand=False, side=RIGHT)
@@ -653,7 +694,7 @@ def enter_form():
         reciev_code_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= reciev_code_var, 
+            textvariable= receiv_code_var, 
             width=27
         )
         reciev_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
@@ -661,7 +702,7 @@ def enter_form():
         reciev_name_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= reciev_name_var , 
+            textvariable= receiv_name_var , 
             width=27
         )
         reciev_name_entry.pack(fill=BOTH, expand=False, side=RIGHT)
@@ -669,7 +710,7 @@ def enter_form():
         desc_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            #textvariable= desc_var ,
+            textvariable= desc_var ,
             width=28
         )
         desc_entry.pack(fill=BOTH, expand=False, side=RIGHT)

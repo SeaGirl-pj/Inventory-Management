@@ -1,6 +1,6 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock
+from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 
@@ -55,8 +55,6 @@ class CheckDeleteReveiver:
         if confirm:
             DeleteReceiver(number = self.number, code= self.code, title= self.title)
             
-
-
 class CheckStock:
     def __init__(self, code, kala_name, number, unit):
         self.code = code
@@ -87,7 +85,6 @@ class CheckStock:
         if not error:
             AddStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
 
-
 class CheckDeleteStock:
     def __init__(self, code, kala_name, number, unit):
         self.code = code
@@ -103,4 +100,41 @@ class CheckDeleteStock:
         confirm = msg.askyesno(title='Confirmation', message=message)
         if confirm:
             DeleteStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
+
+
+class CheckAddDepository:
+    def __init__(self, number, date , reciev_code , reciev_name , desc):
+        self.number = number
+        self.date = date
+        self.reciev_code = reciev_code
+        self.reciev_name = reciev_name
+        self.desc = desc
+
+        self.check()
+
+    def check(self):
+
+        error = False
+         
+        if not self.number or not self.date or not self.reciev_code or not self.reciev_name or not self.desc:
+            messagebox.showerror("Error", "All fields are required!")
+            error = True
+
+            return
+        try:
+            self.number = int(self.number)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "code must be a number!")
+            error = True
+            return
+        
+        try:
+            self.number = int(self.number)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "just number!")
+            error = True
+            return
+        
+        if not error:
+            AddDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
 
