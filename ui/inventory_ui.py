@@ -7,6 +7,7 @@ import tkinter.messagebox as msg
 from tkinter import ttk
 import sqlite3
 import os
+import jdatetime
 
 
 
@@ -426,12 +427,75 @@ def enter_form():
 
     def select_depository(event):
 
+        
+        def get_number():
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute('SELECT number FROM depository')
+            rows = cursor.fetchall()
+
+            num = 1 
+
+            for row in rows:
+                num+=1
+
+            connection.close()
+
+            return num        
+
+        def show_table():
+            
+            for item in tree.get_children():
+                tree.delete(item)
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS depository (
+                number INTEGER ,
+                code INTEGER,
+                title TEXT NOT NULL
+            )
+            ''')
+            cursor.execute(f'SELECT * FROM depository')
+            rows = cursor.fetchall()
+
+            data=[]
+
+
+            for row in rows:
+
+                data.append(row)  
+
+            for item in data:  
+
+                number = item[0] 
+                code = item[1]
+                title = item[2]
+
+                tree.insert('', 'end', values=(title, code, number)) 
+            
+            num = get_number()
+            number_var.set(num) 
+            current_date = jdatetime.datetime.now()
+            day_var.set(current_date.strftime('%d')) 
+            month_var.set(current_date.strftime('%m')) 
+            year_var.set(current_date.strftime('%Y')) 
+
+
+            connection.close()
+
         for widgets in btn_frame.winfo_children():
-             widgets.destroy()
+            widgets.destroy()
 
 
         for widgets in add_frame.winfo_children():
-             widgets.destroy()
+            widgets.destroy()
 
         for item in tree.get_children():
             tree.delete(item)
@@ -452,14 +516,6 @@ def enter_form():
         tree.heading('2', text='تاریخ', anchor='center')
         tree.heading('1', text='شماره', anchor='center')
 
-        data = [
-            ("مقدار 1-1", "مقدار 1-2", "مقدار 1-3", "مقدار 1-3", "مقدار 1-3"),
-            ("مقدار 2-1", "مقدار 2-2", "مقدار 2-3", "مقدار 1-3", "مقدار 1-3"),
-            ("مقدار 3-1", "مقدار 3-2", "مقدار 3-3", "مقدار 1-3", "مقدار 1-3"),
-        ]
-
-        for item in data:
-            tree.insert('', 'end', values=item)
         
         tree.pack(padx=(20,0), pady=(20,0), fill=X)
 
@@ -501,7 +557,6 @@ def enter_form():
 
         #endregion
 
-
         #region add Label
             
         num= ttk.Label(
@@ -532,7 +587,7 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        reciev_code.pack(side=RIGHT, padx=(0,100), fill=Y)
+        reciev_code.pack(side=RIGHT, padx=(0,80), fill=Y)
 
         reciev_name= ttk.Label(
             master=heading_in_add_frame,
@@ -542,7 +597,7 @@ def enter_form():
             background='#F1EFEF'
 
         )
-        reciev_name.pack(side=RIGHT, padx=(0,60), fill=Y)
+        reciev_name.pack(side=RIGHT, padx=(0,80), fill=Y)
 
         desc= ttk.Label(
             master=heading_in_add_frame,
@@ -557,40 +612,69 @@ def enter_form():
     
         #endregion
 
+        number_var = StringVar()
+        day_var = StringVar()
+        month_var = StringVar()
+        year_var = StringVar()
+        reciev_code_var = StringVar()
+        reciev_name_var = StringVar()
+        desc_var = StringVar()
+
+
+
+
         #region Entry
 
             
-        first=ttk.Entry(
+        number_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
+            textvariable=number_var,
             width=25
             
         ).pack(fill=BOTH, expand=False, side=RIGHT)
 
-        second=ttk.Entry(
+        day_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=25
+            textvariable= day_var,
+            width=6
         ).pack(fill=BOTH, expand=False, side=RIGHT)
-
-        third=ttk.Entry(
+        month_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=25
+            textvariable= month_var,
+            width=6
         ).pack(fill=BOTH, expand=False, side=RIGHT)
-
-        fourth=ttk.Entry(
+        year_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=25
+            textvariable= year_var, 
+            width=6
         ).pack(fill=BOTH, expand=False, side=RIGHT)
 
-
-        fifth=ttk.Entry(
+        reciev_code_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=26
+            textvariable= reciev_code_var, 
+            width=27
         ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        reciev_name_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            textvariable= reciev_name_var , 
+            width=27
+        ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        desc_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            textvariable= desc_var ,
+            width=28
+        ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        show_table()
 
 
 
