@@ -200,3 +200,80 @@ class AddDepository:
 
         messagebox.showinfo("Success", "Data saved successfully!")
 
+class DeleteDepository:
+    def __init__ (self, number, date , reciev_code , reciev_name , desc):
+        self.number = number
+        self.date = date
+        self.reciev_code = reciev_code
+        self.reciev_name = reciev_name
+        self.desc = desc
+        
+        self.delete_row_database()
+
+
+    def delete_row_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        DELETE FROM depository WHERE number = ? AND date = ? AND recievercode = ? AND recievername = ? AND desc = ?
+        ''', ( self.number, self.date, self.reciev_code, self.reciev_name, self.desc))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data deleted successfully!")
+
+
+
+class AddDepositoryExit:
+    def __init__ (self, number, date , reciev_code , reciev_name , desc):
+        self.number = number
+        self.date = date
+        self.reciev_code = reciev_code
+        self.reciev_name = reciev_name
+        self.desc = desc
+        
+        self.setup_database() 
+        self.save_to_database()
+
+
+    def setup_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+        connection = sqlite3.connect(DATABASE_PATH)
+
+        cursor = connection.cursor()
+
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS depository (
+            number INTEGER ,
+            date text,
+            recievercode TEXT NOT NULL,
+            recievername TEXT NOT NULL,
+            desc TEXT NOT NULL
+        
+        )
+        ''')
+
+        cursor.close()
+
+    def save_to_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        INSERT INTO depository (number, date, recievercode, recievername, desc) VALUES (?, ?, ?, ?, ?)
+        ''', (self.number, self.date, self.reciev_code, self.reciev_name, self.desc))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data saved successfully!")

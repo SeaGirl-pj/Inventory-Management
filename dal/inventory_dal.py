@@ -1,8 +1,9 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository
+from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
+import os
 
 
 
@@ -137,4 +138,22 @@ class CheckAddDepository:
         
         if not error:
             AddDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
+
+
+class CheckDeleteDepository:
+    def __init__(self, number, date , reciev_code , reciev_name , desc):
+        self.number = number
+        self.date = date
+        self.reciev_code = reciev_code
+        self.reciev_name = reciev_name
+        self.desc = desc
+
+        self.check()
+
+    def check(self):
+
+        message = (f'number: {self.number} \ndate: {self.date} \nreceiver code: {self.reciev_code}\nreceiver name: {self.reciev_name}\ndescription: {self.desc}\nAre you sure you want to delete this row?')
+        confirm = msg.askyesno(title='Confirmation', message=message)
+        if confirm:
+            DeleteDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
 

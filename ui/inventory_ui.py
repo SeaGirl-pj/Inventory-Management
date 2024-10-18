@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository
+from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -8,8 +8,6 @@ from tkinter import ttk
 import sqlite3
 import os
 import jdatetime
-
-
 
 
 
@@ -101,7 +99,7 @@ def new_user_form():
         text="نام كاربری",
         font=("Dubai", 10),
         compound=LEFT
-    ).pack(side=RIGHT, padx=(10,25))
+    ).pack(side=RIGHT, padx=(10,50))
 
     ttk.Label(
         master=pass_entry,
@@ -127,7 +125,7 @@ def new_user_form():
         master=user_entry,
         width=100,
         justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,30))
+    ).pack(fill=BOTH, expand=True, padx=(60,22))
 
     ttk.Entry(
         master=pass_entry,
@@ -425,6 +423,271 @@ def enter_form():
 
         #endregion
 
+    def click_open_depository(event):
+
+        def get_number():
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute(f'SELECT number FROM {id_dep}')
+            rows = cursor.fetchall()
+
+            num = 1 
+
+            for row in rows:
+                num+=1
+
+            connection.close()
+
+            return num        
+
+        def show_table():
+            
+            for item in tree.get_children():
+                tree.delete(item)
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute(f'''
+            CREATE TABLE IF NOT EXISTS {id_dep} (
+                number INTEGER ,
+                kalacode INTEGER,
+                kalaname TEXT NOT NULL,
+                unit TEXT NOT NULL,
+                moeincode INTEGER,
+                moeinname TEXT NOT NULL
+            )
+            ''')
+            cursor.execute(f'SELECT * FROM {id_dep}')
+            rows = cursor.fetchall()
+
+            data=[]
+
+
+            for row in rows:
+
+                data.append(row)  
+
+            for item in data:  
+
+                number = item[0] 
+                kala_code = item[1]
+                kala_name = item[2]
+                unit = item[3]
+                moein_code = item[4]
+                moein_name = item[5]
+
+                tree.insert('', 'end', values=(moein_name, moein_code, unit, kala_name, kala_code, number)) 
+            
+            num = get_number()
+            number_var.set(num)
+
+        def select_back():
+            select_depository(event)
+
+
+        selected_item = tree.focus()
+
+        item_values = tree.item(selected_item, 'values')
+
+        id_dep = f'dep{item_values[4]}'
+        date = item_values[3]
+        name = item_values[2]
+
+        
+
+        for widgets in btn_frame.winfo_children():
+            widgets.destroy()
+        
+
+        for widgets in add_frame.winfo_children():
+            widgets.destroy()
+
+        for item in tree.get_children():
+            tree.delete(item)
+
+        first_add_frame = Frame(master=add_frame, bg="#F1EFEF")
+        first_add_frame.pack(fill=BOTH)
+
+        heading_in_add_frame= Frame(master=first_add_frame, width=800, height=35, bg='#F1EFEF')
+        heading_in_add_frame.pack(side=TOP, fill=X, padx=10)
+
+        entry_in_add_frame= Frame(master=first_add_frame, width=800, height=40, bg='#F1EFEF')
+        entry_in_add_frame.pack(side=TOP, fill=X, padx=10)
+        entry_in_add_frame.propagate(False)
+
+        tree['columns'] = ('6','5','4','3', '2', '1')
+
+        tree.column('#0', width=0, stretch=NO)
+        tree.column('5', width=130, anchor='center')
+        tree.column('5', width=130, anchor='center')
+        tree.column('4', width=130, anchor='center')
+        tree.column('3', width=130, anchor='center')
+        tree.column('2', width=130, anchor='center') 
+        tree.column('1', width=50, anchor='center')
+
+        tree.heading('#0', text='', anchor='center') 
+        tree.heading('6', text='عنوان معین', anchor='center') 
+        tree.heading('5', text='کد معین', anchor='center') 
+        tree.heading('4', text='واحد', anchor='center') 
+        tree.heading('3', text='عنوان کالا', anchor='center')
+        tree.heading('2', text='کد کالا', anchor='center')
+        tree.heading('1', text='ردیف', anchor='center')
+
+    
+        tree.pack(padx=(20,0), pady=(20,0), fill=X)
+
+        add_button_depository = ttk.Button(
+            master=btn_frame,
+            text='اضافه',
+            compound=LEFT,
+            #command=add_btn
+        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+        
+        delete = ttk.Button(
+            master=btn_frame,
+            text='حذف',
+            compound=LEFT,
+            #command=remove_btn
+        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+
+        back = ttk.Button(
+        master=btn_frame,
+        text='برگشت',
+        compound=LEFT,
+        command=select_back
+        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+
+        
+
+        #region add Label
+            
+        number_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='ردیف',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        number_label.pack(side=RIGHT, padx=(0,20), fill=Y)
+
+        kala_code_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='کد کالا',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        kala_code_label.pack(side=RIGHT, padx=(0,70), fill=Y)
+
+        kala_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='عنوان کالا',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        kala_label.pack(side=RIGHT, padx=(0,100), fill=Y)
+
+        unit_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='واحد',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        unit_label.pack(side=RIGHT, padx=(0,110), fill=Y)
+
+        moein_code_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='کد معین',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        moein_code_label.pack(side=RIGHT, padx=(0,100), fill=Y)
+
+        moein_label= ttk.Label(
+            master=heading_in_add_frame,
+            text='عنوان معین',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        moein_label.pack(side=RIGHT, padx=(0,100), fill=Y)
+
+    
+        #endregion
+
+        number_var = StringVar()
+        day_var = StringVar()
+        month_var = StringVar()
+        year_var = StringVar()
+        receiv_code_var = StringVar()
+        receiv_name_var = StringVar()
+        desc_var = StringVar()
+
+        #region Entry
+
+            
+        number_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=10,
+            textvariable=number_var 
+        )
+        number_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        kala_code_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=23
+        )
+        kala_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        kala_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=23
+        )
+        kala_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        
+
+        unit_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            textvariable= receiv_code_var, 
+            width=23
+        )
+        unit_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        moein_code_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            textvariable= receiv_name_var , 
+            width=23
+        )
+        moein_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        moein_entry=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            textvariable= desc_var ,
+            width=23
+        )
+        moein_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        show_table()
+
     def select_depository(event):
 
         
@@ -487,6 +750,11 @@ def enter_form():
             num = get_number()
             current_date = jdatetime.datetime.now()
 
+            number_entry.delete(0, END)
+            day_entry.delete(0, END)
+            month_entry.delete(0, END)
+            year_entry.delete(0, END)
+
             number_entry.insert(0, num)
             day_entry.insert(0, current_date.strftime('%d'))
             month_entry.insert(0, current_date.strftime('%m'))
@@ -503,22 +771,21 @@ def enter_form():
 
             selected_item = tree.selection()
 
-            # if selected_item:  
-            #     for item in selected_item:
-            #         values = tree.item(item, 'values')
+            if selected_item:  
+                for item in selected_item:
+                    values = tree.item(item, 'values')
                     
-            #         number = values[0]
-            #         date = values[1]
-            #         reciev_code = values[2]
-            #         reciev_name = values[3]
-            #         desc = values[4]
+                    number = values[4]
+                    date = values[3]
+                    reciev_code = values[2]
+                    reciev_name = values[1]
+                    desc = values[0]
 
-            #     CheckDeleteDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)   
-            #     show_table()    
+                CheckDeleteDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)   
+                show_table()    
                     
-            # else:
-            #     msg.showerror("Error", "Please select a user to delete.")
-
+            else:
+                msg.showerror("Error", "Please select a user to delete.")
 
         def add_btn():
 
@@ -535,7 +802,38 @@ def enter_form():
             receiv_name_var.set('')
             desc_var.set('')
             show_table()
-            
+        
+        def on_reciev_code_entry_leave():
+
+            code = reciev_code_entry.get()
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS receiver (
+                number INTEGER ,
+                code INTEGER,
+                title TEXT NOT NULL
+            )
+            ''')
+            cursor.execute(f'SELECT * FROM receiver')
+            rows = cursor.fetchall()
+
+            data=[]
+
+            for row in rows:
+
+                data.append(row)  
+
+            for item in data:  
+                if code == item[2]:
+                    receiv_name_var.set(item[3])
+
+
+
+
 
         for widgets in btn_frame.winfo_children():
             widgets.destroy()
@@ -565,6 +863,8 @@ def enter_form():
         
         tree.pack(padx=(20,0), pady=(20,0), fill=X)
 
+        tree.bind("<Double-1>", click_open_depository)
+
         
         second_add_frame = Frame(master=add_frame, bg="#F1EFEF")
         second_add_frame.pack(fill=BOTH)
@@ -591,15 +891,9 @@ def enter_form():
             master=btn_frame,
             text='حذف',
             compound=LEFT,
-            command=select_add_button
+            command=remove_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)  
-
-        edit = ttk.Button(
-            master=btn_frame,
-            text='ویرایش',
-            compound=LEFT,
-            command=select_add_button
-        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+  
 
         #endregion
 
@@ -657,7 +951,11 @@ def enter_form():
 
     
         #endregion
-        
+
+        number_var = StringVar()
+        day_var = StringVar()
+        month_var = StringVar()
+        year_var = StringVar()
         receiv_code_var = StringVar()
         receiv_name_var = StringVar()
         desc_var = StringVar()
@@ -698,6 +996,10 @@ def enter_form():
             width=27
         )
         reciev_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+
+        reciev_code_entry.bind("<FocusOut>", on_reciev_code_entry_leave)
+
+        
 
         reciev_name_entry=ttk.Entry(
             master=entry_in_add_frame,
