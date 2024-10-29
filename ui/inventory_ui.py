@@ -464,7 +464,6 @@ def enter_form():
             ''')
             cursor.execute(f'SELECT * FROM {id_dep}')
             rows = cursor.fetchall()
-
             data=[]
 
 
@@ -484,11 +483,57 @@ def enter_form():
                 tree.insert('', 'end', values=(moein_name, moein_code, unit, kala_name, kala_code, number)) 
             
             num = get_number()
-            number_var.set(num)
+            number_entry.insert(0, num)
+
+            connection.close()
 
         def select_back():
             select_depository(event)
 
+        def fetch_kala():
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            
+            
+            cursor.execute("SELECT kala, code, unit FROM stock")
+            items = cursor.fetchall()
+            return {item[0]: (item[1] , item[2]) for item in items} 
+            
+
+        def update_kala_code_entry(event):
+            selected_kala = kala_entry.get()  # نام انتخاب‌شده را گرفتن
+            code, unit = data.get(selected_kala)
+
+            kala_code_entry.delete(0, END)  # پاک کردن محتوای قبلی Entry
+            if code:
+                kala_code_entry.insert(0, code) 
+            unit_entry.delete(0, END)  # پاک کردن محتوای قبلی Entry
+            if unit:
+    
+                unit_entry.insert(0, unit)
+
+        def update_combobox(event):
+            
+            try:
+                kala_name = int(kala_code_entry.get())
+            # اینجا می‌توانید سایر عملیات مورد نظر خود را انجام دهید
+            except ValueError:
+                kala_name = kala_code_entry.get()
+                pass
+
+            for item in data.keys():
+                if data[item][0] == kala_name:  # اگر فامیل در دیکشنری باشد
+                    kala_entry.set(item) # مقدار ComboBox را به نام متناظر تغییر دهید
+                    unit_entry.delete(0, END)  # پاک کردن سن فعلی
+                    unit_entry.insert(0, data[item][1]) 
+
+                    break
+            else:
+
+                kala_entry.set('')
+                unit_entry.delete(0, END)
 
         selected_item = tree.focus()
 
@@ -629,7 +674,6 @@ def enter_form():
     
         #endregion
 
-        number_var = StringVar()
         day_var = StringVar()
         month_var = StringVar()
         year_var = StringVar()
@@ -643,8 +687,7 @@ def enter_form():
         number_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            width=10,
-            textvariable=number_var 
+            width=10
         )
         number_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
@@ -654,19 +697,25 @@ def enter_form():
             width=23
         )
         kala_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
-        kala_entry=ttk.Entry(
+        kala_code_entry.bind("<KeyRelease>", update_combobox)
+
+        data = fetch_kala()
+        kala_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
-            width=23
+            width=20,
+            state="readonly"
         )
         kala_entry.pack(fill=BOTH, expand=False, side=RIGHT)
-        
+        kala_entry['values'] = list(data.keys())
+        kala_entry.bind("<<ComboboxSelected>>", update_kala_code_entry)        
 
         unit_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
             textvariable= receiv_code_var, 
-            width=23
+            width=23,
+            #state="readonly"
         )
         unit_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
@@ -674,15 +723,16 @@ def enter_form():
             master=entry_in_add_frame,
             justify='center',
             textvariable= receiv_name_var , 
-            width=23
+            width=20
         )
         moein_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
-        moein_entry=ttk.Entry(
+        moein_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
             textvariable= desc_var ,
-            width=23
+            width=25,
+            state="readonly"
         )
         moein_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
@@ -1042,7 +1092,7 @@ def enter_form():
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS stock (
             code INTEGER ,
-            kala TEXT NOT NULL,
+            kala TEXT ,
             number INTEGER,
             unit TEXT NOT NULL
             )
