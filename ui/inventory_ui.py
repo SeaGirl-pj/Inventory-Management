@@ -497,43 +497,67 @@ def enter_form():
             cursor = connection.cursor()
             
             
-            cursor.execute("SELECT kala, code, unit FROM stock")
+            cursor.execute("SELECT kala, code FROM stock")
             items = cursor.fetchall()
-            return {item[0]: (item[1] , item[2]) for item in items} 
+            return {item[0]: item[1] for item in items} 
             
 
         def update_kala_code_entry(event):
-            selected_kala = kala_entry.get()  # نام انتخاب‌شده را گرفتن
-            code, unit = data.get(selected_kala)
 
-            kala_code_entry.delete(0, END)  # پاک کردن محتوای قبلی Entry
+            selected_name = kala_entry.get() 
+            code = data.get(selected_name) 
+            kala_code_entry.delete(0, END)
             if code:
-                kala_code_entry.insert(0, code) 
-            unit_entry.delete(0, END)  # پاک کردن محتوای قبلی Entry
-            if unit:
-    
-                unit_entry.insert(0, unit)
+                kala_code_entry.insert(0, code)
 
-        def update_combobox(event):
-            
+        def update_combobox_kala(event):
             try:
-                kala_name = int(kala_code_entry.get())
-            # اینجا می‌توانید سایر عملیات مورد نظر خود را انجام دهید
+                kala_name = int(kala_code_entry.get())  
+
             except ValueError:
-                kala_name = kala_code_entry.get()
-                pass
+                kala_name = kala_code_entry.get()  
 
             for item in data.keys():
-                if data[item][0] == kala_name:  # اگر فامیل در دیکشنری باشد
-                    kala_entry.set(item) # مقدار ComboBox را به نام متناظر تغییر دهید
-                    unit_entry.delete(0, END)  # پاک کردن سن فعلی
-                    unit_entry.insert(0, data[item][1]) 
-
+                if data[item] == kala_name:  
+                    kala_entry.set(item)  
                     break
             else:
-
                 kala_entry.set('')
-                unit_entry.delete(0, END)
+
+
+        def fetch_moein():
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            
+            
+            cursor.execute("SELECT title, code FROM receiver")
+            items = cursor.fetchall()
+            return {item[0]: item[1] for item in items} 
+            
+
+        def update_moein_code_entry(event):
+            
+            selected_name = moein_entry.get() 
+            code = data_moein.get(selected_name) 
+            moein_code_entry.delete(0, END)
+            if code:
+                moein_code_entry.insert(0, code)
+
+        def update_combobox_moein(event):
+            try:
+                moein_name = int(moein_code_entry.get())  
+
+            except ValueError:
+                moein_name = moein_code_entry.get()  
+
+            for item in data_moein.keys():
+                if data_moein[item] == moein_name:  
+                    moein_entry.set(item)  
+                    break
+            else:
+                moein_entry.set('')
 
         selected_item = tree.focus()
 
@@ -674,9 +698,6 @@ def enter_form():
     
         #endregion
 
-        day_var = StringVar()
-        month_var = StringVar()
-        year_var = StringVar()
         receiv_code_var = StringVar()
         receiv_name_var = StringVar()
         desc_var = StringVar()
@@ -697,9 +718,10 @@ def enter_form():
             width=23
         )
         kala_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
-        kala_code_entry.bind("<KeyRelease>", update_combobox)
+        kala_code_entry.bind("<KeyRelease>", update_combobox_kala)
 
         data = fetch_kala()
+
         kala_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
@@ -714,8 +736,7 @@ def enter_form():
             master=entry_in_add_frame,
             justify='center',
             textvariable= receiv_code_var, 
-            width=23,
-            #state="readonly"
+            width=23
         )
         unit_entry.pack(fill=BOTH, expand=False, side=RIGHT)
 
@@ -726,7 +747,9 @@ def enter_form():
             width=20
         )
         moein_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        moein_code_entry.bind("<KeyRelease>", update_combobox_moein)
 
+        data_moein = fetch_moein()
         moein_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
@@ -735,6 +758,8 @@ def enter_form():
             state="readonly"
         )
         moein_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        moein_entry['values'] = list(data_moein.keys())
+        moein_entry.bind("<<ComboboxSelected>>", update_moein_code_entry)    
 
         show_table()
 
