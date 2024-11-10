@@ -1,6 +1,6 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository, AddDepositoryExit, DeleteDepositoryExit
+from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository, AddDepositoryExit, DeleteDepositoryExit, AddMoein, DeleteMoein
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 import os
@@ -233,3 +233,55 @@ class CheckDeleteDepositoryExit:
         if confirm:
             DeleteDepositoryExit(number=self.number , kalacode=self.kalacode , kalaname=self.kalaname ,
                           unit=self.unit , moeincode=self.moeincode, moeinname=self.moeinname, id_=self.id_dep )
+            
+
+
+class CheckAddMoein:
+    def __init__(self, number, code, title):
+        self.number = number
+        self.code = code
+        self.title = title
+
+        self.check()
+
+    def check(self):
+
+        error = False
+         
+        if not self.number or not self.code or not self.title:
+            messagebox.showerror("Error", "All fields are required!")
+            error = True
+
+            return
+        try:
+            self.code = int(self.code)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "code must be a number!")
+            error = True
+            return
+        
+        try:
+            self.number = int(self.number)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "just number!")
+            error = True
+            return
+        
+        if not error:
+            AddMoein(number = self.number, code= self.code, title= self.title)
+            
+class CheckDeleteMoein:
+    def __init__(self, number, code, title):
+        self.number = number
+        self.code = code
+        self.title = title
+
+        self.check()
+
+    def check(self):
+
+        message = (f'number: {self.number} \ncode: {self.code} \ntitle: {self.title}\nAre you sure you want to delete this row?')
+        confirm = msg.askyesno(title='Confirmation', message=message)
+        if confirm:
+            DeleteMoein(number = self.number, code= self.code, title= self.title)
+            

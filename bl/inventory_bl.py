@@ -309,4 +309,73 @@ class DeleteDepositoryExit:
 
 
 
+class AddMoein:
+    def __init__ (self, number, code, title):
+        self.number = number
+        self.code = code
+        self.title = title
+        
+        self.setup_database() 
+        self.save_to_database()
+
+
+    def setup_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+        connection = sqlite3.connect(DATABASE_PATH)
+
+        cursor = connection.cursor()
+
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS moein (
+            number INTEGER ,
+            code INTEGER,
+            title TEXT NOT NULL
+        )
+        ''')
+
+        cursor.close()
+
+    def save_to_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        INSERT INTO moein (number, code, title) VALUES (?, ?, ?)
+        ''', (self.number, self.code, self.title))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data saved successfully!")
+
+class DeleteMoein:
+    def __init__ (self, number, code, title):
+        self.number = number
+        self.code = code
+        self.title = title
+        
+        self.delete_row_database()
+
+
+    def delete_row_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        DELETE FROM moein WHERE number = ? AND code = ? AND title = ?
+        ''', (self.number, self.code, self.title))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data deleted successfully!")
+
 

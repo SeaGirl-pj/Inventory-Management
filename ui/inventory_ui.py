@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository, CheckAddDepositoryExit, CheckDeleteDepositoryExit
+from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository, CheckAddDepositoryExit, CheckDeleteDepositoryExit, CheckAddMoein, CheckDeleteMoein
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -466,6 +466,8 @@ def enter_form():
             connection.close()
 
         def select_back():
+            for widgets in depository_title_frame.winfo_children():
+                widgets.destroy()
             select_depository(event)
 
         def fetch_kala():
@@ -508,7 +510,7 @@ def enter_form():
             cursor = connection.cursor()
             
             
-            cursor.execute("SELECT title, code FROM receiver")
+            cursor.execute("SELECT title, code FROM moein")
             items = cursor.fetchall()
             return {item[0]: item[1] for item in items} 
             
@@ -589,7 +591,7 @@ def enter_form():
 
         id_dep = f'dep{item_values[4]}'
         date = item_values[3]
-        name = item_values[2]
+        name = item_values[1]
 
         
 
@@ -602,6 +604,27 @@ def enter_form():
 
         for item in tree.get_children():
             tree.delete(item)
+
+        dep_title = ttk.Label(
+        master=depository_title_frame,
+        text=name,
+        font=("Dubai", 10),
+        compound=TOP,
+        background='#F1EFEF'
+
+        )
+        dep_title.pack(side=TOP, pady=(25,5))
+
+        dep_date = ttk.Label(
+            master=depository_title_frame,
+            text=date,
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+            
+
+        )
+        dep_date.pack(side=TOP,pady=(0,5))
 
         first_add_frame = Frame(master=add_frame, bg="#F1EFEF")
         first_add_frame.pack(fill=BOTH)
@@ -900,36 +923,8 @@ def enter_form():
             receiv_name_var.set('')
             desc_var.set('')
             show_table()
-        
-        def on_reciev_code_entry_leave():
 
-            code = reciev_code_entry.get()
-
-            DATABASE_DIR = 'database'
-            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
-            connection = sqlite3.connect(DATABASE_PATH)
-            cursor = connection.cursor()
-            cursor.execute('''
-            CREATE TABLE IF NOT EXISTS receiver (
-                number INTEGER ,
-                code INTEGER,
-                title TEXT NOT NULL
-            )
-            ''')
-            cursor.execute(f'SELECT * FROM receiver')
-            rows = cursor.fetchall()
-
-            data=[]
-
-            for row in rows:
-
-                data.append(row)  
-
-            for item in data:  
-                if code == item[2]:
-                    receiv_name_var.set(item[3])
-
-        def fetch_moein():
+        def fetch_reciev():
             DATABASE_DIR = 'database'
             DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
             connection = sqlite3.connect(DATABASE_PATH)
@@ -940,7 +935,7 @@ def enter_form():
             items = cursor.fetchall()
             return {item[0]: item[1] for item in items} 
 
-        def update_moein_code_entry(event):
+        def update_reciev_code_entry(event):
             
             selected_name = reciev_name_entry.get() 
             code = data_reciev.get(selected_name) 
@@ -948,7 +943,7 @@ def enter_form():
             if code:
                 reciev_code_entry.insert(0, code)
 
-        def update_combobox_moein(event):
+        def update_combobox_reciev(event):
             try:
                 moein_name = int(reciev_code_entry.get())  
 
@@ -962,7 +957,8 @@ def enter_form():
             else:
                 reciev_name_entry.set('')
 
-
+        for widgets in depository_title_frame.winfo_children():
+                widgets.destroy()
 
         for widgets in btn_frame.winfo_children():
             widgets.destroy()
@@ -1124,12 +1120,12 @@ def enter_form():
             width=27
         )
         reciev_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
-        reciev_code_entry.bind("<KeyRelease>", update_combobox_moein)
+        reciev_code_entry.bind("<KeyRelease>", update_combobox_reciev)
 
         #reciev_code_entry.bind("<FocusOut>", on_reciev_code_entry_leave)
 
 
-        data_reciev = fetch_moein()
+        data_reciev = fetch_reciev()
         reciev_name_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
@@ -1138,7 +1134,7 @@ def enter_form():
         )
         reciev_name_entry.pack(fill=BOTH, expand=False, side=RIGHT)
         reciev_name_entry['values'] = list(data_reciev.keys())
-        reciev_name_entry.bind("<<ComboboxSelected>>", update_moein_code_entry) 
+        reciev_name_entry.bind("<<ComboboxSelected>>", update_reciev_code_entry) 
 
         
 
@@ -1222,7 +1218,6 @@ def enter_form():
             else:
                 msg.showerror("Error", "Please select a user to delete.")
 
-
         def add_btn():
             code_val = code_var.get()
             kala_name_val = kala_name_var.get()
@@ -1245,6 +1240,9 @@ def enter_form():
 
         for item in tree.get_children():
             tree.delete(item)
+
+        for widgets in depository_title_frame.winfo_children():
+            widgets.destroy()
 
         tree['columns'] = ('4','3', '2', '1')
 
@@ -1391,10 +1389,234 @@ def enter_form():
 
         #endregion
 
-    def select_add_button():
-        tree.insert('', 'end', values= ('-','-','-'))
+    def select_moein(event):
+        
+        def get_number():
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute('SELECT number FROM moein')
+            rows = cursor.fetchall()
+
+            num = 1 
+
+            for row in rows:
+                num+=1
+
+            connection.close()
+
+            return num        
+
+        def show_table():
+            
+            for item in tree.get_children():
+                tree.delete(item)
+
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS moein (
+                number INTEGER ,
+                code INTEGER,
+                title TEXT NOT NULL
+            )
+            ''')
+            cursor.execute(f'SELECT * FROM moein')
+            rows = cursor.fetchall()
+
+            data=[]
+
+
+            for row in rows:
+
+                data.append(row)  
+
+            for item in data:  
+
+                number = item[0] 
+                code = item[1]
+                title = item[2]
+
+                tree.insert('', 'end', values=(title, code, number)) 
+            
+            num = get_number()
+            num_var.set(num) 
+            
+            
+
+            connection.close()
+
+        def remove_btn():
+
+            selected_item = tree.selection()
+
+            if selected_item:  
+                for item in selected_item:
+                    values = tree.item(item, 'values')
+                    name = values[0]
+                    code= values[1]
+                    number = values[2]
+
+                CheckDeleteMoein(number= number, code= code, title= name)   
+                show_table()    
+                    
+            else:
+                msg.showerror("Error", "Please select a user to delete.")
+
+        def add_btn():
+
+            num_val = num_var.get()
+            code_val = code_var.get()
+            title_val = title_var.get()
+            
+            CheckAddMoein(number = num_val, code= code_val, title= title_val)
+
+            
+            code_var.set('')
+            title_var.set('')
+            show_table()
+            
+        for widgets in btn_frame.winfo_children():
+             widgets.destroy()
+
+        for widgets in add_frame.winfo_children():
+             widgets.destroy()
+
+        for item in tree.get_children():
+            tree.delete(item) 
+
+        for widgets in depository_title_frame.winfo_children():
+            widgets.destroy()
+
+        tree['columns'] = ('3', '2', '1')
+
+        tree.column('#0', width=0, stretch=NO)  
+        tree.column('3', width=300, anchor='center')
+        tree.column('2', width=100, anchor='center') 
+        tree.column('1', width=10, anchor='center')
+
+        tree.heading('#0', text='', anchor='center')  
+        tree.heading('3', text='عنوان', anchor='center')
+        tree.heading('2', text='کد', anchor='center')
+        tree.heading('1', text='#', anchor='center')
+
+        
+        
         tree.pack(padx=(20,0), pady=(20,0), fill=X)
 
+
+        first_add_frame = Frame(master=add_frame, bg="#F1EFEF")
+        first_add_frame.pack(fill=BOTH)
+
+        heading_in_add_frame= Frame(master=first_add_frame, width=800, height=35, bg='#F1EFEF')
+        heading_in_add_frame.pack(side=TOP, fill=X, padx=10)
+
+        entry_in_add_frame= Frame(master=first_add_frame, width=800, height=40, bg='#F1EFEF')
+        entry_in_add_frame.pack(side=TOP, fill=X, padx=10)
+        entry_in_add_frame.propagate(False)
+
+        #region button
+            
+        add_button_receiver = ttk.Button(
+            master=btn_frame,
+            text='اضافه',
+            compound=LEFT,
+            command=add_btn
+        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+
+        delete = ttk.Button(
+            master=btn_frame,
+            text='حذف',
+            compound=LEFT,
+            command=remove_btn
+        ).pack(side=BOTTOM, padx=(0,0), pady=1)  
+
+
+        #endregion
+
+        #region add Label
+            
+        label_num= ttk.Label(
+            master=heading_in_add_frame,
+            text='#',
+            font=("Dubai", 12),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        label_num.pack(side=RIGHT, padx=(0,120), fill=Y)
+
+        label_code= ttk.Label(
+            master=heading_in_add_frame,
+            text='کد',
+            font=("Dubai", 12),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        label_code.pack(side=RIGHT, padx=(0,240), fill=Y)
+
+        label_title= ttk.Label(
+            master=heading_in_add_frame,
+            text='عنوان',
+            font=("Dubai", 10),
+            compound=TOP,
+            background='#F1EFEF'
+
+        )
+        label_title.pack(side=RIGHT, padx=(0,240), fill=Y)
+
+        #endregion
+
+
+        #region stringvar
+
+        num_var = StringVar()
+        code_var = StringVar()
+        title_var = StringVar()
+
+
+        #endregion
+
+
+
+        #code_values = values_get('code')
+
+        #region Entry
+
+            
+        entry_num=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=42,
+            textvariable=num_var
+            
+        ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        entry_code=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=42,
+            textvariable=code_var,
+        ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        entry_title=ttk.Entry(
+            master=entry_in_add_frame,
+            justify='center',
+            width=43,
+            textvariable= title_var
+        ).pack(fill=BOTH, expand=False, side=RIGHT)
+
+        show_table()
+
+        
+
+
+        #endregion
 
 
     form = Tk()
@@ -1406,7 +1628,7 @@ def enter_form():
     top_pad = (form.winfo_screenheight()//2) - (form_height//2)
     form.geometry(f"{form_width}x{form_height}+{left_pad}+{top_pad}")
     form.configure(bg="#F1EFEF")
-    form.overrideredirect(True)
+    form.overrideredirect(False)
     style = ttk.Style()
     style.configure("Table.TFrame", background="#C7C8CC")
 
@@ -1419,12 +1641,12 @@ def enter_form():
     all_selection_frame.propagate(True)
     
 
-    table_selection_frame = Frame(master=all_selection_frame, height=300, width=200, bg="#C7C8CC")
+    table_selection_frame = Frame(master=all_selection_frame, height=250, width=200, bg="#C7C8CC")
     table_selection_frame.pack(side=TOP, padx=(0, 0), pady=(0, 0))
     
 
     labels_frame = Frame(master=table_selection_frame, height=400, width=200, bg="#C7C8CC")
-    labels_frame.pack(side=RIGHT, padx=(25, 25), pady=(0, 150))
+    labels_frame.pack(side=RIGHT, padx=(25, 25), pady=(0, 100))
 
     add_frame = Frame(master=form, width=799, height=50, bg="#F1EFEF")
     add_frame.pack(side=BOTTOM,  pady=(0,25), padx=(25,25), fill=BOTH)
@@ -1433,12 +1655,18 @@ def enter_form():
     table_frame.pack(fill=BOTH, expand=True, padx=25, pady=(25, 0))
 
 
-    btn_frame = Frame(master=all_selection_frame, height=240, width=100, bg='#F1EFEF')
-    btn_frame.pack(side=BOTTOM, padx=0, pady=0, fill=BOTH)
+    btn_frame = Frame(master=all_selection_frame, height=150, width=100, bg='#F1EFEF')
+    btn_frame.pack(side=BOTTOM, padx=0, pady=0, fill=X)
     btn_frame.propagate(False)
 
-    exit_frame = Frame(master=all_selection_frame, height=100, width=100, bg='#F1EFEF')
+    depository_title_frame = Frame(master=all_selection_frame, height=100, width=100, bg='#F1EFEF')
+    depository_title_frame.pack(side=BOTTOM, padx=0, pady=0, fill=X)
+    depository_title_frame.propagate(False)
+
+    exit_frame = Frame(master=all_selection_frame, height=200, width=100, bg='#F1EFEF')
     exit_frame.pack(side=BOTTOM, padx=0, pady=0, fill=BOTH)
+
+    
     
 
     
@@ -1487,6 +1715,19 @@ def enter_form():
     stock.bind("<Button-1>", select_stock)
     stock.bind("<Enter>", change_color) 
     stock.bind("<Leave>", reset_color) 
+
+    moein = ttk.Label(
+        master=labels_frame,
+        text="معین",
+        font=("Dubai", 10),
+        compound=TOP,
+        background='#C7C8CC'
+
+    )
+    moein.pack(side=TOP,pady=(0,5))
+    moein.bind("<Button-1>", select_moein)
+    moein.bind("<Enter>", change_color) 
+    moein.bind("<Leave>", reset_color) 
 
 
     #endregion
