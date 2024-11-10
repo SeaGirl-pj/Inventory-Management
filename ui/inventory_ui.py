@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository
+from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository, CheckAddDepositoryExit, CheckDeleteDepositoryExit
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -253,27 +253,6 @@ def enter_form():
             else:
                 msg.showerror("Error", "Please select a user to delete.")
 
-        # def values_get(value):
-        #     DATABASE_DIR = 'database'
-        #     DATABASE_PATH = os.path.join(DATABASE_DIR, 'receiver.db')
-        #     connection = sqlite3.connect(DATABASE_PATH)
-        #     cursor = connection.cursor()
-        #     cursor.execute(f'SELECT {value} FROM receiver')
-        #     rows = cursor.fetchall()
-
-        #     code_values=[]
-
-
-        #     for row in rows:
-                
-        #         for name in row:
-        #             code_values.append(name)
-
-        #     connection.close()
-
-        #     return code_values
-
-
         def add_btn():
 
             num_val = num_var.get()
@@ -287,7 +266,6 @@ def enter_form():
             title_var.set('')
             show_table()
             
-
         for widgets in btn_frame.winfo_children():
              widgets.destroy()
 
@@ -500,7 +478,6 @@ def enter_form():
             cursor.execute("SELECT kala, code FROM stock")
             items = cursor.fetchall()
             return {item[0]: item[1] for item in items} 
-            
 
         def update_kala_code_entry(event):
 
@@ -524,7 +501,6 @@ def enter_form():
             else:
                 kala_entry.set('')
 
-
         def fetch_moein():
             DATABASE_DIR = 'database'
             DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
@@ -536,7 +512,6 @@ def enter_form():
             items = cursor.fetchall()
             return {item[0]: item[1] for item in items} 
             
-
         def update_moein_code_entry(event):
             
             selected_name = moein_entry.get() 
@@ -558,6 +533,55 @@ def enter_form():
                     break
             else:
                 moein_entry.set('')
+        
+        def select_add_btn():
+            num_val = number_entry.get()
+            kalacode_val = kala_code_entry.get()
+            kalaname_val = kala_entry.get()
+            unit_val = unit_entry.get()
+            moeincode_val = moein_code_entry.get()
+            moeinname_val = moein_entry.get()
+            
+            
+            CheckAddDepositoryExit(number=num_val , kalacode=kalacode_val , kalaname=kalaname_val ,
+                                   unit=unit_val , moeincode=moeincode_val, moeinname=moeinname_val, id_= id_dep)
+            kala_code_entry.delete(0, END)
+            kala_entry.set('')
+            unit_entry.delete(0, END)
+            moein_code_entry.delete(0, END)
+            moein_entry.set('')
+            number_entry.delete(0, END)
+            show_table()  
+
+        def remove_btn():
+
+            selected_item = tree.selection()
+
+            if selected_item:  
+                for item in selected_item:
+                    values = tree.item(item, 'values')
+                    moeinname = values[0]
+                    moeincode= values[1]
+                    unit = values[2]
+                    kalaname = values[3]
+                    kalacode = values[4]
+                    num = values[5]
+
+                CheckDeleteDepositoryExit(number=num , kalacode=kalacode , kalaname=kalaname ,
+                                   unit=unit , moeincode=moeincode, moeinname=moeinname, id_= id_dep)   
+                
+                show_table()    
+                    
+            else:
+                msg.showerror("Error", "Please select a user to delete.")
+            
+            kala_code_entry.delete(0, END)
+            kala_entry.set('')
+            unit_entry.delete(0, END)
+            moein_code_entry.delete(0, END)
+            moein_entry.set('')
+            number_entry.delete(0, END)
+            show_table()
 
         selected_item = tree.focus()
 
@@ -592,7 +616,7 @@ def enter_form():
         tree['columns'] = ('6','5','4','3', '2', '1')
 
         tree.column('#0', width=0, stretch=NO)
-        tree.column('5', width=130, anchor='center')
+        tree.column('6', width=130, anchor='center')
         tree.column('5', width=130, anchor='center')
         tree.column('4', width=130, anchor='center')
         tree.column('3', width=130, anchor='center')
@@ -614,14 +638,14 @@ def enter_form():
             master=btn_frame,
             text='اضافه',
             compound=LEFT,
-            #command=add_btn
+            command=select_add_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)  
         
         delete = ttk.Button(
             master=btn_frame,
             text='حذف',
             compound=LEFT,
-            #command=remove_btn
+            command=remove_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)  
 
         back = ttk.Button(
@@ -698,9 +722,11 @@ def enter_form():
     
         #endregion
 
-        receiv_code_var = StringVar()
-        receiv_name_var = StringVar()
-        desc_var = StringVar()
+        kala_code_var = StringVar()
+        kala_name_var = StringVar()
+        unit_var = StringVar()
+        moein_code_var = StringVar()
+        moein_name_var = StringVar()
 
         #region Entry
 
@@ -735,7 +761,6 @@ def enter_form():
         unit_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= receiv_code_var, 
             width=23
         )
         unit_entry.pack(fill=BOTH, expand=False, side=RIGHT)
@@ -743,7 +768,6 @@ def enter_form():
         moein_code_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= receiv_name_var , 
             width=20
         )
         moein_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
@@ -753,7 +777,6 @@ def enter_form():
         moein_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= desc_var ,
             width=25,
             state="readonly"
         )
@@ -906,7 +929,38 @@ def enter_form():
                 if code == item[2]:
                     receiv_name_var.set(item[3])
 
+        def fetch_moein():
+            DATABASE_DIR = 'database'
+            DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+            connection = sqlite3.connect(DATABASE_PATH)
+            cursor = connection.cursor()
+            
+            
+            cursor.execute("SELECT title, code FROM receiver")
+            items = cursor.fetchall()
+            return {item[0]: item[1] for item in items} 
 
+        def update_moein_code_entry(event):
+            
+            selected_name = reciev_name_entry.get() 
+            code = data_reciev.get(selected_name) 
+            reciev_code_entry.delete(0, END)
+            if code:
+                reciev_code_entry.insert(0, code)
+
+        def update_combobox_moein(event):
+            try:
+                moein_name = int(reciev_code_entry.get())  
+
+            except ValueError:
+                moein_name = reciev_code_entry.get()  
+
+            for item in data_reciev.keys():
+                if data_reciev[item] == moein_name:  
+                    reciev_name_entry.set(item)  
+                    break
+            else:
+                reciev_name_entry.set('')
 
 
 
@@ -1067,22 +1121,26 @@ def enter_form():
         reciev_code_entry=ttk.Entry(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= receiv_code_var, 
             width=27
         )
         reciev_code_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        reciev_code_entry.bind("<KeyRelease>", update_combobox_moein)
 
-        reciev_code_entry.bind("<FocusOut>", on_reciev_code_entry_leave)
+        #reciev_code_entry.bind("<FocusOut>", on_reciev_code_entry_leave)
 
-        
 
-        reciev_name_entry=ttk.Entry(
+        data_reciev = fetch_moein()
+        reciev_name_entry=ttk.Combobox(
             master=entry_in_add_frame,
             justify='center',
-            textvariable= receiv_name_var , 
-            width=27
+            width=27,
+            state="readonly"
         )
         reciev_name_entry.pack(fill=BOTH, expand=False, side=RIGHT)
+        reciev_name_entry['values'] = list(data_reciev.keys())
+        reciev_name_entry.bind("<<ComboboxSelected>>", update_moein_code_entry) 
+
+        
 
         desc_entry=ttk.Entry(
             master=entry_in_add_frame,

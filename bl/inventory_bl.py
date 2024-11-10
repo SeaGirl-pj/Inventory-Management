@@ -230,12 +230,14 @@ class DeleteDepository:
 
 
 class AddDepositoryExit:
-    def __init__ (self, number, date , reciev_code , reciev_name , desc):
+    def __init__ (self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
         self.number = number
-        self.date = date
-        self.reciev_code = reciev_code
-        self.reciev_name = reciev_name
-        self.desc = desc
+        self.kalacode = kalacode
+        self.kalaname = kalaname
+        self.unit = unit
+        self.moeincode = moeincode
+        self.moeinname = moeinname
+        self.id_dep = id_
         
         self.setup_database() 
         self.save_to_database()
@@ -246,17 +248,15 @@ class AddDepositoryExit:
         DATABASE_DIR = 'database'
         DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
         connection = sqlite3.connect(DATABASE_PATH)
-
         cursor = connection.cursor()
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS depository (
+        cursor.execute(f'''
+        CREATE TABLE IF NOT EXISTS {self.id_dep} (
             number INTEGER ,
-            date text,
-            recievercode TEXT NOT NULL,
-            recievername TEXT NOT NULL,
-            desc TEXT NOT NULL
-        
+            kalacode INTEGER,
+            kalaname TEXT NOT NULL,
+            unit TEXT NOT NULL,
+            moeincode INTEGER,
+            moeinname TEXT NOT NULL
         )
         ''')
 
@@ -270,10 +270,43 @@ class AddDepositoryExit:
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
      
-        cursor.execute('''
-        INSERT INTO depository (number, date, recievercode, recievername, desc) VALUES (?, ?, ?, ?, ?)
-        ''', (self.number, self.date, self.reciev_code, self.reciev_name, self.desc))
+        cursor.execute(f'''
+        INSERT INTO {self.id_dep} (number , kalacode , kalaname , unit, moeincode , moeinname) VALUES (?, ?, ?, ?, ?, ?)
+        ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
         conn.commit()
         conn.close()
 
         messagebox.showinfo("Success", "Data saved successfully!")
+
+class DeleteDepositoryExit:
+    def __init__ (self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
+        self.number = number
+        self.kalacode = kalacode
+        self.kalaname = kalaname
+        self.unit = unit
+        self.moeincode = moeincode
+        self.moeinname = moeinname
+        self.id_dep = id_
+        
+        self.delete_row_database()
+
+
+    def delete_row_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute(f'''
+        DELETE FROM {self.id_dep} WHERE number = ? AND kalacode = ? AND kalaname = ? AND unit = ? AND moeincode = ? AND moeinname = ?
+        ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Data deleted successfully!")
+
+
+
+

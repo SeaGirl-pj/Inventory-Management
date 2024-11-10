@@ -1,6 +1,6 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository
+from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository, AddDepositoryExit, DeleteDepositoryExit
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 import os
@@ -157,3 +157,79 @@ class CheckDeleteDepository:
         if confirm:
             DeleteDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
 
+
+class CheckAddDepositoryExit:
+    def __init__(self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
+        self.number = number
+        self.kalacode = kalacode
+        self.kalaname = kalaname
+        self.unit = unit
+        self.moeincode = moeincode
+        self.moeinname = moeinname
+        self.id_dep = id_
+
+        self.check()
+
+    def check(self):
+
+        error = False
+         
+        if not self.number or not self.kalacode or not self.kalaname or not self.unit or not self.moeincode or not self.moeinname:
+            messagebox.showerror("Error", "All fields are required!")
+            error = True
+
+            return
+        try:
+            self.number = int(self.number)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "code must be a number!")
+            error = True
+            return
+        
+        try:
+            self.unit = int(self.unit)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "just number!")
+            error = True
+            return
+        
+        try:
+            self.moeincode = int(self.moeincode)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "just number!")
+            error = True
+            return
+        
+        try:
+            self.kalacode = int(self.kalacode)  # تبدیل سن به عدد صحیح
+        except ValueError:
+            messagebox.showerror("Error", "just number!")
+            error = True
+            return
+        
+        if not error:
+            print(self.number)
+            AddDepositoryExit(number=self.number , kalacode=self.kalacode , kalaname=self.kalaname ,
+                          unit=self.unit , moeincode=self.moeincode, moeinname=self.moeinname, id_=self.id_dep )
+
+
+class CheckDeleteDepositoryExit:
+    def __init__(self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
+        self.number = number
+        self.kalacode = kalacode
+        self.kalaname = kalaname
+        self.unit = unit
+        self.moeincode = moeincode
+        self.moeinname = moeinname
+        self.id_dep = id_
+
+
+        self.check()
+
+    def check(self):
+
+        message = ('Are you sure you want to delete this row?')
+        confirm = msg.askyesno(title='Confirmation', message=message)
+        if confirm:
+            DeleteDepositoryExit(number=self.number , kalacode=self.kalacode , kalaname=self.kalaname ,
+                          unit=self.unit , moeincode=self.moeincode, moeinname=self.moeinname, id_=self.id_dep )
