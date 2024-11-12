@@ -1,10 +1,37 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
-from bl.inventory_bl import AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository, AddDepositoryExit, DeleteDepositoryExit, AddMoein, DeleteMoein
+from bl.inventory_bl import AddUser, AddReceiver, AddStock, DeleteReceiver, DeleteStock, AddDepository, DeleteDepository, AddDepositoryExit, DeleteDepositoryExit, AddMoein, DeleteMoein
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 import os
 
+
+class CheckNewUser:
+    def __init__(self, user, password, repassword):
+        self.user = user
+        self.password = password
+        self.repassword = repassword
+
+        self.check()
+
+    def check(self):
+
+        error = False
+         
+        if not self.user or not self.password or not self.repassword:
+            messagebox.showerror("Error", "All fields are required!")
+            error = True
+
+        if self.password != self.repassword:
+            messagebox.showerror("Error!", "repeat password correctly!")
+            error = True
+
+        
+        if not error:
+            AddUser(user = self.user, password=self.password)
+
+        
+      
 
 class CheckAddReveiver:
     def __init__(self, number, code, title):

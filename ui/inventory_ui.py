@@ -1,5 +1,5 @@
 
-from dal.inventory_dal import CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository, CheckAddDepositoryExit, CheckDeleteDepositoryExit, CheckAddMoein, CheckDeleteMoein
+from dal.inventory_dal import CheckNewUser, CheckAddReveiver, CheckStock, CheckDeleteReveiver, CheckDeleteStock, CheckAddDepository, CheckDeleteDepository, CheckAddDepositoryExit, CheckDeleteDepositoryExit, CheckAddMoein, CheckDeleteMoein
 from tkinter import Listbox, Text, Tk, Label, Frame,Entry, TOP, LEFT, RIGHT, BOTTOM, PhotoImage, X,NO, Y, BOTH, Button, W, Toplevel, READABLE, StringVar, END
 from tkinter.ttk import Combobox, Scrollbar, Treeview
 from tkinter.messagebox import showerror, showinfo
@@ -13,6 +13,17 @@ import threading
 
 
 def new_user_form():
+
+    def save_user():
+        new_user_val = new_user.get()
+        new_pass_val = new_pass.get()
+        rep_new_pass_val = rep_new_pass.get()
+
+        CheckNewUser(user = new_user_val, password=new_pass_val, repassword=rep_new_pass_val)
+
+        new_user.delete(0, END)
+        new_pass.delete(0, END)
+        rep_new_pass.delete(0, END)
 
     def back_btn_onclick():
         new_user_form.quit()
@@ -120,26 +131,36 @@ def new_user_form():
 
     # endregion
 
+    new_user_var = StringVar()
+    new_pass_var = StringVar()
+    rep_new_pass_var = StringVar()
+
     #region Entry
 
-    ttk.Entry(
+    new_user = ttk.Entry(
         master=user_entry,
         width=100,
-        justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,22))
+        justify=RIGHT,
+        textvariable= new_user_var
+    )
+    new_user.pack(fill=BOTH, expand=True, padx=(60,22))
 
-    ttk.Entry(
+    new_pass = ttk.Entry(
         master=pass_entry,
         width=100,
-        justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,30) )
+        justify=RIGHT,
+        textvariable= new_pass_var
+    )
+    new_pass.pack(fill=BOTH, expand=True, padx=(60,30) )
 
 
-    ttk.Entry(
+    rep_new_pass = ttk.Entry(
         master=rep_pass_entry,
         width=100,
-        justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,0) )
+        justify=RIGHT,
+        textvariable= rep_new_pass_var
+    )
+    rep_new_pass.pack(fill=BOTH, expand=True, padx=(60,0) )
 
 
 
@@ -150,7 +171,8 @@ def new_user_form():
     ttk.Button(
         master=footer,
         text='ثبت',
-        compound=LEFT
+        compound=LEFT,
+        command=save_user
     ).pack(side=TOP, padx=6, pady=1)
 
     ttk.Button(
@@ -1781,7 +1803,7 @@ def enter_form():
     moein.bind("<Leave>", reset_color) 
 
     #endregion
-    
+
 
     #region grid
 
@@ -1818,6 +1840,19 @@ def enter_form():
 
 def main_window():
 
+    def set_database():
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+        connection = sqlite3.connect(DATABASE_PATH)
+        cursor = connection.cursor()
+        cursor.execute(f'''
+        CREATE TABLE IF NOT EXISTS users (
+            user BLOB NOT NULL,
+            password BLOB NOT NULL
+        )
+        ''')
+
     def change_color(event):
         new_user.config(foreground="red")  
 
@@ -1828,6 +1863,23 @@ def main_window():
         main_form.quit()
         main_form.destroy()
 
+    def check_user(user, password):
+      
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+        connection = sqlite3.connect(DATABASE_PATH)
+        cursor = connection.cursor()
+
+     
+        cursor.execute("SELECT * FROM users WHERE user = ? AND password = ?", (user, password))
+        
+        results = cursor.fetchall()
+
+        connection.close()
+
+        return results
+
+        
 
     def on_click(event):
         main_form.withdraw()
@@ -1835,9 +1887,24 @@ def main_window():
         main_form.deiconify()
     
     def on_click_enter():
-        main_form.quit()
-        main_form.destroy()
-        enter_form()
+
+        user_val = user_var.get()
+        pass_val = pass_var.get()
+
+        results = check_user(user_val, pass_val)
+
+        if results:
+            main_form.quit()
+            main_form.destroy()
+            enter_form()
+
+        else:
+            msg.showinfo("Error", "No User Found!")
+
+        user_var.set('')
+        pass_var.set('')
+
+        
             
 
     main_form = Tk()
@@ -1854,6 +1921,11 @@ def main_window():
     main_form.overrideredirect(True)
     #endregion
 
+    set_database()
+
+    user_var = StringVar()
+    pass_var = StringVar()
+
     # region frame
     
 
@@ -1864,21 +1936,23 @@ def main_window():
     body.pack(fill=BOTH, expand=True, padx=10, pady=10)
     body.propagate(False)
 
-    user_entry = Frame(
+    user_frame = Frame(
         master = body, 
         height=30,
-        bg='#F1EFEF'
+        bg='#F1EFEF',
+        
+        
     )
-    user_entry.pack(fill=X, expand=True, padx=10, pady=(40,0), side=TOP)
-    user_entry.propagate(False)
+    user_frame.pack(fill=X, expand=True, padx=10, pady=(40,0), side=TOP)
+    user_frame.propagate(False)
 
-    pass_entry = Frame(
+    pass_frame = Frame(
         master = body, 
         height=30,
         bg='#F1EFEF'
     )
-    pass_entry.pack(fill=X, expand=True, padx=10, pady=(0,10), side=TOP)
-    pass_entry.propagate(False)
+    pass_frame.pack(fill=X, expand=True, padx=10, pady=(0,10), side=TOP)
+    pass_frame.propagate(False)
 
 
     # endregion
@@ -1888,14 +1962,14 @@ def main_window():
 
 
     ttk.Label(
-        master=user_entry,
+        master=user_frame,
         text="نام كاربری",
         font=("Dubai", 10),
         compound=LEFT,
     ).pack(side=RIGHT, padx=(15,50))
 
     ttk.Label(
-        master=pass_entry,
+        master=pass_frame,
         text="رمز عبور",
         font=("Dubai", 10),
         compound=LEFT,
@@ -1904,19 +1978,27 @@ def main_window():
 
     # endregion
 
+
+    user_var = StringVar()
+    pass_var = StringVar()
+
     #region Entry
 
-    ttk.Entry(
-        master=user_entry,
+    user_entry =ttk.Entry(
+        master=user_frame,
         width=100,
-        justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,0))
+        justify=RIGHT,
+        textvariable=user_var
+    )
+    user_entry.pack(fill=BOTH, expand=True, padx=(60,0))
 
-    ttk.Entry(
-        master=pass_entry,
+    pass_entry= ttk.Entry(
+        master=pass_frame,
         width=100,
-        justify=RIGHT
-    ).pack(fill=BOTH, expand=True, padx=(60,0) )
+        justify=RIGHT,
+        textvariable=pass_var
+    )
+    pass_entry.pack(fill=BOTH, expand=True, padx=(60,0) )
 
 
 
@@ -1955,8 +2037,4 @@ def main_window():
     ).pack(side=BOTTOM, padx=(0,320), pady=1)
 
     main_form.mainloop()
-
-
-
-
 

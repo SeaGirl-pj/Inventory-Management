@@ -5,6 +5,48 @@ import threading
 
 DATABASE_DIR = 'database'
 
+class AddUser:
+    def __init__ (self, user, password):
+        self.user = user
+        self.password = password
+        
+        self.setup_database() 
+        self.save_to_database()
+
+
+    def setup_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+        connection = sqlite3.connect(DATABASE_PATH)
+
+        cursor = connection.cursor()
+
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            user BLOB NOT NULL,
+            password BLOB NOT NULL
+        )
+        ''')
+
+        cursor.close()
+
+    def save_to_database(self):
+
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+     
+        cursor.execute('''
+        INSERT INTO users (user, password) VALUES (?, ?)
+        ''', (self.user, self.password))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "User saved successfully!")
+
 class AddReceiver:
     def __init__ (self, number, code, title):
         self.number = number
