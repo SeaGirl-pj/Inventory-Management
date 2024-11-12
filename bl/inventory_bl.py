@@ -216,6 +216,42 @@ class DeleteDepository:
         cursor.execute('''
         DELETE FROM depository WHERE number = ? AND date = ? AND recievercode = ? AND recievername = ? AND desc = ?
         ''', ( self.number, self.date, self.reciev_code, self.reciev_name, self.desc))
+
+        table_name = f'dep{self.number}'
+        print(table_name)
+
+        cursor.execute(f"SELECT kalacode, unit FROM {table_name}")
+        items = cursor.fetchall()
+        
+
+        for item in items:
+
+            cursor.execute(f"""
+            SELECT number
+            FROM stock
+            WHERE code = ?;
+            """, (item[0],))
+
+            result = cursor.fetchone()
+
+            new_value = result[0] + int(item[1])
+            condition_value = item[0]
+
+            
+            cursor.execute(f"""
+                UPDATE stock
+                SET number = ?
+                WHERE code = ?;
+            """, (new_value, condition_value))
+
+
+
+
+        try:
+            cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
+        except sqlite3.Error as e:
+            print(f"خطا در حذف جدول: {e}")
+    
         conn.commit()
         conn.close()
 
@@ -265,6 +301,27 @@ class AddDepositoryExit:
         cursor.execute(f'''
         INSERT INTO {self.id_dep} (number , kalacode , kalaname , unit, moeincode , moeinname) VALUES (?, ?, ?, ?, ?, ?)
         ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
+
+        cursor.execute(f"""
+            SELECT number
+            FROM stock
+            WHERE code = ?;
+        """, (self.kalacode,))
+
+        result = cursor.fetchone()
+
+        new_value = result[0] - self.unit
+        condition_value = self.kalacode
+
+        
+        cursor.execute(f"""
+            UPDATE stock
+            SET number = ?
+            WHERE code = ?;
+        """, (new_value, condition_value))
+
+
+
         conn.commit()
         conn.close()
 
@@ -294,6 +351,25 @@ class DeleteDepositoryExit:
         cursor.execute(f'''
         DELETE FROM {self.id_dep} WHERE number = ? AND kalacode = ? AND kalaname = ? AND unit = ? AND moeincode = ? AND moeinname = ?
         ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
+
+        cursor.execute(f"""
+            SELECT number
+            FROM stock
+            WHERE code = ?;
+        """, (self.kalacode,))
+
+        result = cursor.fetchone()
+
+        new_value = result[0] + int(self.unit)
+        condition_value = self.kalacode
+
+        
+        cursor.execute(f"""
+            UPDATE stock
+            SET number = ?
+            WHERE code = ?;
+        """, (new_value, condition_value))
+
         conn.commit()
         conn.close()
 

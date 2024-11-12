@@ -811,7 +811,6 @@ def enter_form():
 
     def select_depository(event):
 
-        
         def get_number():
 
             DATABASE_DIR = 'database'
@@ -821,10 +820,16 @@ def enter_form():
             cursor.execute('SELECT number FROM depository')
             rows = cursor.fetchall()
 
-            num = 1 
+            a = -1
 
             for row in rows:
-                num+=1
+                a+=1
+            
+            try:
+                num = rows[a][0]+1
+            
+            except IndexError:
+                num = 1
 
             connection.close()
 
@@ -919,8 +924,8 @@ def enter_form():
             CheckAddDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)
 
             
-            receiv_code_var.set('')
-            receiv_name_var.set('')
+            reciev_code_entry.delete(0, END)
+            reciev_name_entry.set('')
             desc_var.set('')
             show_table()
 
