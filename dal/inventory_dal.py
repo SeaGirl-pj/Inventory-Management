@@ -4,6 +4,7 @@ from bl.inventory_bl import AddUser, AddReceiver, AddStock, DeleteReceiver, Dele
 from tkinter.messagebox import showerror, showinfo
 import tkinter.messagebox as msg
 import os
+import threading
 
 
 class CheckNewUser:
@@ -29,9 +30,6 @@ class CheckNewUser:
         
         if not error:
             AddUser(user = self.user, password=self.password)
-
-        
-      
 
 class CheckAddReveiver:
     def __init__(self, number, code, title):
@@ -195,8 +193,36 @@ class CheckAddDepositoryExit:
 
     def check(self):
 
+        DATABASE_DIR = 'database'
+        DATABASE_PATH = os.path.join(DATABASE_DIR, 'database.db')
+
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+
+        lock = threading.Lock()
+
+        lock.acquire()
+
+        cursor.execute(f"""
+            SELECT number
+            FROM stock
+            WHERE code = ?;
+        """, (self.kalacode,))
+
+        result = cursor.fetchone()
+
+        new_value = result[0] - int(self.unit)
+
+        lock.release()
+        conn.commit()
+        conn.close()
+
         error = False
-         
+
+        if new_value<0 :
+            messagebox.showerror("Error", "not enough storage!")
+            error = True
+    
         if not self.number or not self.kalacode or not self.kalaname or not self.unit or not self.moeincode or not self.moeinname:
             messagebox.showerror("Error", "All fields are required!")
             error = True
@@ -212,21 +238,21 @@ class CheckAddDepositoryExit:
         try:
             self.unit = int(self.unit)  # تبدیل سن به عدد صحیح
         except ValueError:
-            messagebox.showerror("Error", "just number!")
+            messagebox.showerror("Error", "amount must be a number!")
             error = True
             return
         
         try:
             self.moeincode = int(self.moeincode)  # تبدیل سن به عدد صحیح
         except ValueError:
-            messagebox.showerror("Error", "just number!")
+            messagebox.showerror("Error", "moein code must be a number!")
             error = True
             return
         
         try:
             self.kalacode = int(self.kalacode)  # تبدیل سن به عدد صحیح
         except ValueError:
-            messagebox.showerror("Error", "just number!")
+            messagebox.showerror("Error", "kala code must be a number!")
             error = True
             return
         

@@ -750,7 +750,7 @@ def enter_form():
 
         unit_label= ttk.Label(
             master=heading_in_add_frame,
-            text='واحد',
+            text='تعداد',
             font=("Dubai", 10),
             compound=TOP,
             background='#F1EFEF'
