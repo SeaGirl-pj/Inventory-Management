@@ -4,8 +4,6 @@ import os
 
 DATABASE_DIR = 'database'
 
-
-
 class AddReceiver:
     def __init__ (self, number, code, title):
         self.number = number
@@ -75,8 +73,6 @@ class DeleteReceiver:
 
         messagebox.showinfo("Success", "Data deleted successfully!")
 
-
-
 class AddStock:
     def __init__ (self, code, kala_name, number, unit):
         self.code = code
@@ -123,7 +119,6 @@ class AddStock:
 
         messagebox.showinfo("Success", "Data saved successfully!")
 
-
 class DeleteStock:
     def __init__ (self, code, kala_name, number, unit):
         self.code = code
@@ -149,7 +144,6 @@ class DeleteStock:
         conn.close()
 
         messagebox.showinfo("Success", "Data deleted successfully!")
-
 
 class AddDepository:
     def __init__ (self, number, date , reciev_code , reciev_name , desc):
@@ -226,8 +220,6 @@ class DeleteDepository:
         conn.close()
 
         messagebox.showinfo("Success", "Data deleted successfully!")
-
-
 
 class AddDepositoryExit:
     def __init__ (self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
@@ -307,8 +299,6 @@ class DeleteDepositoryExit:
 
         messagebox.showinfo("Success", "Data deleted successfully!")
 
-
-
 class AddMoein:
     def __init__ (self, number, code, title):
         self.number = number
@@ -377,5 +367,3 @@ class DeleteMoein:
         conn.close()
 
         messagebox.showinfo("Success", "Data deleted successfully!")
-
-

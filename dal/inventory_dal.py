@@ -6,7 +6,6 @@ import tkinter.messagebox as msg
 import os
 
 
-
 class CheckAddReveiver:
     def __init__(self, number, code, title):
         self.number = number
@@ -102,7 +101,6 @@ class CheckDeleteStock:
         if confirm:
             DeleteStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
 
-
 class CheckAddDepository:
     def __init__(self, number, date , reciev_code , reciev_name , desc):
         self.number = number
@@ -139,7 +137,6 @@ class CheckAddDepository:
         if not error:
             AddDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
 
-
 class CheckDeleteDepository:
     def __init__(self, number, date , reciev_code , reciev_name , desc):
         self.number = number
@@ -156,7 +153,6 @@ class CheckDeleteDepository:
         confirm = msg.askyesno(title='Confirmation', message=message)
         if confirm:
             DeleteDepository(number = self.number, date = self.date , reciev_code = self.reciev_code, reciev_name = self.reciev_name, desc = self.desc)
-
 
 class CheckAddDepositoryExit:
     def __init__(self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
@@ -208,10 +204,8 @@ class CheckAddDepositoryExit:
             return
         
         if not error:
-            print(self.number)
             AddDepositoryExit(number=self.number , kalacode=self.kalacode , kalaname=self.kalaname ,
                           unit=self.unit , moeincode=self.moeincode, moeinname=self.moeinname, id_=self.id_dep )
-
 
 class CheckDeleteDepositoryExit:
     def __init__(self, number, kalacode , kalaname , unit , moeincode, moeinname, id_):
@@ -234,8 +228,6 @@ class CheckDeleteDepositoryExit:
             DeleteDepositoryExit(number=self.number , kalacode=self.kalacode , kalaname=self.kalaname ,
                           unit=self.unit , moeincode=self.moeincode, moeinname=self.moeinname, id_=self.id_dep )
             
-
-
 class CheckAddMoein:
     def __init__(self, number, code, title):
         self.number = number
