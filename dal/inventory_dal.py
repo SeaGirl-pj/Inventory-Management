@@ -96,7 +96,7 @@ class CheckDeleteStock:
 
     def check(self):
 
-        message = (f'code: {self.code} \nkala: {self.kala_name} \nnumber: {self.number}\nunit: {self.unit}\nAre you sure you want to delete this row?')
+        message = (f'code: {self.code} \nkala: {self.kala_name} \nnumber: {self.number}\nunit: {self.unit}\nAre you sure you want to continue?')
         confirm = msg.askyesno(title='Confirmation', message=message)
         if confirm:
             DeleteStock(code =self.code , kala_name =self.kala_name , number=self.number ,  unit=self.unit)
@@ -115,7 +115,7 @@ class CheckAddDepository:
 
         error = False
          
-        if not self.number or not self.date or not self.reciev_code or not self.reciev_name or not self.desc:
+        if not self.number or not self.date or not self.reciev_code or not self.reciev_name:
             messagebox.showerror("Error", "All fields are required!")
             error = True
 

@@ -186,10 +186,16 @@ def enter_form():
             cursor.execute('SELECT number FROM receiver')
             rows = cursor.fetchall()
 
-            num = 1 
+            a = -1
 
             for row in rows:
-                num+=1
+                a+=1
+            
+            try:
+                num = rows[a][0]+1
+            
+            except IndexError:
+                num = 1
 
             connection.close()
 
@@ -412,10 +418,16 @@ def enter_form():
             cursor.execute(f'SELECT number FROM {id_dep}')
             rows = cursor.fetchall()
 
-            num = 1 
+            a = -1
 
             for row in rows:
-                num+=1
+                a+=1
+            
+            try:
+                num = rows[a][0]+1
+            
+            except IndexError:
+                num = 1
 
             connection.close()
 
@@ -1237,6 +1249,30 @@ def enter_form():
 
             show_table()
 
+        def edit_btn():
+
+            selected_item = tree.selection()
+
+            if selected_item:  
+                for item in selected_item:
+                    values = tree.item(item, 'values')
+                    code = values[3] 
+                    kala = values[2]
+                    number = values[1]
+                    unit = values[0]
+
+                CheckDeleteStock(code = code , kala_name = kala , number= number ,  unit = unit)   
+                show_table()  
+
+            code_var.set(code)
+            kala_name_var.set(kala)
+            number_var.set(number)
+            unit_var.set(unit)
+
+
+
+            
+
         for widgets in btn_frame.winfo_children():
              widgets.destroy()
 
@@ -1294,6 +1330,13 @@ def enter_form():
             compound=LEFT,
             command=remove_btn
         ).pack(side=BOTTOM, padx=(0,0), pady=1)    
+
+        edit = ttk.Button(
+            master=btn_frame,
+            text='ویرایش',
+            compound=LEFT,
+            command=edit_btn
+        ).pack(side=BOTTOM, padx=(0,0), pady=1) 
 
 
         #endregion
@@ -1405,10 +1448,16 @@ def enter_form():
             cursor.execute('SELECT number FROM moein')
             rows = cursor.fetchall()
 
-            num = 1 
+            a = -1
 
             for row in rows:
-                num+=1
+                a+=1
+            
+            try:
+                num = rows[a][0]+1
+            
+            except IndexError:
+                num = 1
 
             connection.close()
 
