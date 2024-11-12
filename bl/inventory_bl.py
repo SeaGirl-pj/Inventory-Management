@@ -1,6 +1,7 @@
 import sqlite3
 from tkinter import Tk, Label, Entry, Button, messagebox
 import os
+import threading
 
 DATABASE_DIR = 'database'
 
@@ -223,8 +224,11 @@ class DeleteDepository:
         cursor.execute(f"SELECT kalacode, unit FROM {table_name}")
         items = cursor.fetchall()
         
+        lock = threading.Lock()
 
         for item in items:
+            
+            lock.acquire()
 
             cursor.execute(f"""
             SELECT number
@@ -243,6 +247,8 @@ class DeleteDepository:
                 SET number = ?
                 WHERE code = ?;
             """, (new_value, condition_value))
+
+            lock.release()
 
 
 
@@ -302,6 +308,10 @@ class AddDepositoryExit:
         INSERT INTO {self.id_dep} (number , kalacode , kalaname , unit, moeincode , moeinname) VALUES (?, ?, ?, ?, ?, ?)
         ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
 
+        lock = threading.Lock()
+
+        lock.acquire()
+
         cursor.execute(f"""
             SELECT number
             FROM stock
@@ -320,7 +330,7 @@ class AddDepositoryExit:
             WHERE code = ?;
         """, (new_value, condition_value))
 
-
+        lock.release()
 
         conn.commit()
         conn.close()
@@ -352,6 +362,10 @@ class DeleteDepositoryExit:
         DELETE FROM {self.id_dep} WHERE number = ? AND kalacode = ? AND kalaname = ? AND unit = ? AND moeincode = ? AND moeinname = ?
         ''', (self.number , self.kalacode , self.kalaname , self.unit , self.moeincode , self.moeinname))
 
+        lock = threading.Lock()
+
+        lock.acquire()
+
         cursor.execute(f"""
             SELECT number
             FROM stock
@@ -369,6 +383,8 @@ class DeleteDepositoryExit:
             SET number = ?
             WHERE code = ?;
         """, (new_value, condition_value))
+
+        lock.release()
 
         conn.commit()
         conn.close()

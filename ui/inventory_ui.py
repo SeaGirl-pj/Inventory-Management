@@ -8,6 +8,7 @@ from tkinter import ttk
 import sqlite3
 import os
 import jdatetime
+import threading
 
 
 
@@ -253,8 +254,9 @@ def enter_form():
                     code= values[1]
                     number = values[2]
 
-                CheckDeleteReveiver(number= number, code= code, title= name)   
-                show_table()    
+                CheckDeleteReveiver(number= number, code= code, title= name)  
+                threading.Thread(target= show_table).start()
+                  
                     
             else:
                 msg.showerror("Error", "Please select a user to delete.")
@@ -270,7 +272,7 @@ def enter_form():
             
             code_var.set('')
             title_var.set('')
-            show_table()
+            threading.Thread(target= show_table).start()
             
         for widgets in btn_frame.winfo_children():
              widgets.destroy()
@@ -565,7 +567,7 @@ def enter_form():
             moein_code_entry.delete(0, END)
             moein_entry.set('')
             number_entry.delete(0, END)
-            show_table()  
+            threading.Thread(target= show_table).start()  
 
         def remove_btn():
 
@@ -584,7 +586,7 @@ def enter_form():
                 CheckDeleteDepositoryExit(number=num , kalacode=kalacode , kalaname=kalaname ,
                                    unit=unit , moeincode=moeincode, moeinname=moeinname, id_= id_dep)   
                 
-                show_table()    
+                threading.Thread(target= show_table).start() 
                     
             else:
                 msg.showerror("Error", "Please select a user to delete.")
@@ -920,7 +922,7 @@ def enter_form():
                     desc = values[0]
 
                 CheckDeleteDepository(number = number, date = date , reciev_code = reciev_code, reciev_name = reciev_name, desc = desc)   
-                show_table()    
+                threading.Thread(target= show_table).start()   
                     
             else:
                 msg.showerror("Error", "Please select a user to delete.")
@@ -939,7 +941,7 @@ def enter_form():
             reciev_code_entry.delete(0, END)
             reciev_name_entry.set('')
             desc_var.set('')
-            show_table()
+            threading.Thread(target= show_table).start()
 
         def fetch_reciev():
             DATABASE_DIR = 'database'
@@ -1230,7 +1232,7 @@ def enter_form():
                     unit = values[0]
 
                 CheckDeleteStock(code = code , kala_name = kala , number= number ,  unit = unit)   
-                show_table()    
+                threading.Thread(target= show_table).start() 
                     
             else:
                 msg.showerror("Error", "Please select a user to delete.")
@@ -1247,7 +1249,7 @@ def enter_form():
             number_var.set('')
             unit_var.set('')
 
-            show_table()
+            threading.Thread(target= show_table).start()
 
         def edit_btn():
 
@@ -1262,7 +1264,7 @@ def enter_form():
                     unit = values[0]
 
                 CheckDeleteStock(code = code , kala_name = kala , number= number ,  unit = unit)   
-                show_table()  
+                threading.Thread(target= show_table).start() 
 
             code_var.set(code)
             kala_name_var.set(kala)
@@ -1720,13 +1722,8 @@ def enter_form():
     exit_frame = Frame(master=all_selection_frame, height=200, width=100, bg='#F1EFEF')
     exit_frame.pack(side=BOTTOM, padx=0, pady=0, fill=BOTH)
 
-    
-    
-
-    
-    
-
     #endregion
+
 
     #region Label
 
@@ -1783,8 +1780,8 @@ def enter_form():
     moein.bind("<Enter>", change_color) 
     moein.bind("<Leave>", reset_color) 
 
-
     #endregion
+    
 
     #region grid
 
@@ -1805,9 +1802,7 @@ def enter_form():
 
 
 
-    # region button
-
-    
+    # region button 
 
     ttk.Button(
         master=exit_frame,
@@ -1816,8 +1811,6 @@ def enter_form():
         command=exit_btn_onclick
 
     ).pack(side=TOP,pady=5)
-
- 
 
     #endregion
     
