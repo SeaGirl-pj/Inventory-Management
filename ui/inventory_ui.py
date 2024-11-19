@@ -2037,4 +2037,3 @@ def main_window():
     ).pack(side=BOTTOM, padx=(0,320), pady=1)
 
     main_form.mainloop()
-
