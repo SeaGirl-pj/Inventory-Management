@@ -57,4 +57,5 @@ This is a user-friendly and efficient **Inventory Management System** designed t
 ![3](https://github.com/user-attachments/assets/1108d298-603a-42cf-8a18-349acef5f935)
 ![4](https://github.com/user-attachments/assets/9c0bd149-0c04-434c-a2b1-445f00fd549e)
 ![5](https://github.com/user-attachments/assets/77424b99-b49b-4d8a-aa43-d8c2512ae145)
+![6](https://github.com/user-attachments/assets/8c071866-4ed4-4ae3-8487-a5c3c4c021fd)
 
