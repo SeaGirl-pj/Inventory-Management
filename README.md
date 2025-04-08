@@ -1,103 +1,60 @@
+# 📦 Inventory Management System
+
+This is a user-friendly and efficient **Inventory Management System** designed to help manage and track essential warehouse data.
 
 ---
 
-# Inventory Management
+## ✨ Features
 
-**Inventory Management** is a robust application designed to streamline inventory tracking and management for businesses of all sizes. With its intuitive interface and powerful features, this application helps users efficiently manage stock levels, monitor performance, and generate insightful reports.
+- 📁 **Stores Key Inventory Data**:
+  - Subsidiary Account
+  - Subsidiary Account Code
+  - Warehouses
+  - Stock Withdrawal (Inventory Out)
+  - Recipient Information
+  - Current Inventory
 
----
+- 📅 **Organized by Date and Unique Codes** – Every entry is stored and sorted with an associated date and a unique identifier.
 
-## 🌟 Features
+- 💾 **SQL Database** – All data is securely saved in an SQL database, ensuring fast queries and reliable storage.
 
-- **Real-Time Stock Updates**: Automatically tracks changes in inventory levels.
-- **User Management**: Role-based access for admins and employees.
-- **Analytics and Reporting**: Generate detailed reports to analyze inventory trends.
-- **Low Stock Alerts**: Get notifications when stock levels fall below the threshold.
-- **Multi-Location Support**: Manage inventory across various warehouses.
-- **Responsive Design**: Works seamlessly on desktop.
+- 🖥️ **User-Friendly Interface** – The app provides a clean and simple UI, making it easy to navigate and use.
 
----
-
-## 📥 Installation
-
-1. **Clone this repository**:
-   ```bash
-   git clone https://github.com/SeaGirl-pj/Inventory-Management.git
-   ```
-2. **Navigate to the project directory**:
-   ```bash
-   cd Inventory-Management
-   ```
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-4. **Set up the environment**:
-   - Create a `.env` file in the root directory and include the following configurations:
-     ```
-     DATABASE_URL=<your-database-url>
-     JWT_SECRET=<your-secret-key>
-     PORT=3000
-     ```
-5. **Run the application**:
-   ```bash
-   npm start
-   ```
+- 🔐 **User Account System**:
+  - Users must **register** an account before using the app.
+  - After registering, users can **log in** with their credentials.
+  - Each user has their own private account and **cannot access the system without logging in**.
 
 ---
 
-## 📖 Usage
+## 🚀 Getting Started
 
-1. **Log in/Register**: Access the system with your credentials.
-2. **Add Products**: Populate your inventory by adding products and categories.
-3. **Monitor Inventory**: View real-time stock updates and product availability.
-5. **Adjust Inventory**: Easily update stock levels based on sales, returns, or restocking.
-
----
-
-## 🛠️ Built With
-
-- **Frontend**: python
-- **Backend**: python
-- **Database**: MySQL3
-- **Styling**: TTK.tkinter
+1. Launch the application.
+2. Register a new account.
+3. Log in using your credentials.
+4. Start managing inventory records easily.
 
 ---
 
-## 🤝 Contributing
+## 🛠️ Tech Stack
 
-Contributions are welcome to improve this project. To contribute:
-
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add meaningful message about your changes"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. Open a pull request.
+- Language: Python 
+- Database: SQL (e.g., SQLite, MySQL)
+- Interface: GUI (Tkinter)
 
 ---
 
-## 📜 License
+## 📌 Notes
 
-This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute as per the license terms.
-
----
-
-## 📧 Contact
-
-- **Author**: [SeaGirl-pj](https://github.com/SeaGirl-pj)
-- **GitHub**: [Inventory Management Repository](https://github.com/SeaGirl-pj/Inventory-Management.git)
+- This system ensures that only registered users can access their inventory dashboard.
+- All inventory movements and records are tagged with dates and unique codes for better tracking.
+- Ideal for small to mid-sized businesses that require a basic but reliable inventory solution.
 
 ---
 
-Feel free to suggest improvements or report any issues! 😊
+## 📷 Screenshots
 
---- 
+![3](https://github.com/user-attachments/assets/1108d298-603a-42cf-8a18-349acef5f935)
+![4](https://github.com/user-attachments/assets/9c0bd149-0c04-434c-a2b1-445f00fd549e)
+![5](https://github.com/user-attachments/assets/77424b99-b49b-4d8a-aa43-d8c2512ae145)
+
